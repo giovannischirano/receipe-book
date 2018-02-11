@@ -7,7 +7,7 @@
 <div class="row">
   <div class="col-xs-12">
     <!-- lista di ricette item -->
-    <app-recipe-item *ngFor="let x of recipes" [recipe]="x" (recipeSelected)="onRecipeSelected(x)"></app-recipe-item>
+    <app-recipe-item *ngFor="let x of recipes" [recipe]="x"></app-recipe-item>
     <br><br><br>
     <!-- <a *ngFor="let recipe of recipes" href="#" class="list-group-item clearfix">
         <div class="pull-left">
