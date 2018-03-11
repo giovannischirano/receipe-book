@@ -14,17 +14,53 @@ export class ShoppingEditComponent implements OnInit {
 
   @ViewChild('f') newIngForm: NgForm;
   
+  editMode = false;
+  deleteMode = false;
+  ingredientEdit: Ingredient;
+  indexIngredientEdit: number;
+
   constructor(private slService: ShoppinglistService) { }
 
   ngOnInit() {
+    this.slService.editIngredientIndex.subscribe(
+      (index: number) => {
+        this.indexIngredientEdit = index;
+        this.editMode = true;
+        this.deleteMode = true;
+        this.ingredientEdit = this.slService.getIngredient(index);
+        this.newIngForm.form.patchValue({
+          ingName: this.ingredientEdit.name,
+          ingAmount: this.ingredientEdit.amount
+        });
+      }
+    );
   }
 
   onSubmit(){
-    console.log(this.newIngForm);
     const ingName = this.newIngForm.value.ingName;
     const ingAmount = this.newIngForm.value.ingAmount;
     const newIng = new Ingredient(ingName, ingAmount);
-    this.slService.addIngredient(newIng);
+    if(this.editMode){
+      this.slService.updateIngredient(this.indexIngredientEdit, new Ingredient(ingName, ingAmount));
+      this.editMode = false;
+      this.deleteMode = false;
+    }else {
+      this.slService.addIngredient(newIng);
+      this.newIngForm.reset();
+    }
+  }
+
+  onClear(){
+    this.newIngForm.reset();
+    this.editMode = false;
+    this.deleteMode = false;
+  }
+
+  onDelete(){
+    if(this.deleteMode){
+      this.slService.deleteIngredient(this.indexIngredientEdit);
+      this.onClear();
+    }
   }
 
 }
