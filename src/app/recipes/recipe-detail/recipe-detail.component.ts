@@ -4,6 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { Recipe } from '../recipe.model';
 import { RouterStateSnapshot, ActivatedRoute, Params, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -18,20 +19,20 @@ export class RecipeDetailComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private recipesService: RecipeService, 
     private slService: ShoppinglistService,
-    private router: Router) { }
+    private router: Router,
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.route.params.subscribe(
       (params: Params) => {
         this.id = +params['id'];
-        this.recipe = this.recipesService.getReceipe(this.id);
+        this.recipe = this.recipesService.getRecipe(this.id);
       }
     );
   }
 
   onAddToShoppingList(){
-    //console.log(this.recipesService.getReceipe(this.id).ingredients);
-    this.slService.addIngredients(this.recipesService.getReceipe(this.id).ingredients);
+    this.slService.addIngredients(this.recipesService.getRecipe(this.id).ingredients);
   }
 
   onDelete() {

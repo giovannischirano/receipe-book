@@ -1,9 +1,15 @@
+import { Subject } from 'rxjs/Subject';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
+
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
+import { delay } from 'q';
 
 @Component({
   selector: 'app-recipe-list',
@@ -14,22 +20,57 @@ export class RecipeListComponent implements OnInit, OnDestroy {
 
   recipes: Recipe[];
   subscription: Subscription;
+  isAuthenticated: boolean;
+  afterLogin = true;
+  technicalError = false;
 
-  constructor(private router: Router, private recipeService: RecipeService) { }
+  constructor(private router: Router, private recipeService: RecipeService, private authService: AuthService) { }
 
   ngOnInit() {
-    this.recipes = this.recipeService.getReceipes();
-    this.subscription = this.recipeService.recipesChanged
+
+    /*this.subscription = this.authService.isAuthenticated()
       .subscribe(
-        (recipes: Recipe[]) => {
-          this.recipes = recipes;
-          this.router.navigate(['/recipes']);
+        (bool: boolean) => {
+          console.log(bool);
+          this.isAuthenticated = bool;
         }
-      )
+      )*/
+    /*this.subscription = this.authService.isAuthenticated().subscribe (      
+      authStatus => this.isAuthenticated = authStatus    
+    );*/
+    
+    this.isAuthenticated = this.authService.isAuthenticated();
+    //console.log(this.authService.isAuthenticated());
+    
+    this.subscription = this.recipeService.recipesChanged
+    .subscribe(
+      (recipes: Recipe[]) => {
+        this.recipes = recipes;
+        this.router.navigate(['/recipes']);
+      }
+    );
+
+    if(this.isAuthenticated) {
+      console.log("Authenticated!");
+      this.recipeService.getRecipesFromDB()
+        .subscribe(
+          (recipes: Recipe[]) => {
+            console.log("Call to get recipes completed!.. Recipes #:" + recipes.length);
+            this.recipeService.setRecipes(recipes);
+          },
+          (error) => {
+            console.log("Technical Error :(");
+            this.technicalError = true;
+          }
+        );
+    } else {
+      console.log("Not authenticated!");
+      this.router.navigate(['/signin']);
+    }
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if(this.subscription) this.subscription.unsubscribe();
   }
 
 }

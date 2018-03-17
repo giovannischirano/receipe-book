@@ -5,18 +5,17 @@
 </div>
 <hr>
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-xs-12" *ngIf="!technicalError">
     <!-- lista di ricette item -->
-    <app-recipe-item *ngFor="let x of recipes; let i = index" [recipe]="x" [index]="i"></app-recipe-item>
+    <ng-container *ngIf="isAuthenticated; else please_login">
+      <app-recipe-item *ngFor="let x of recipes; let i = index" [recipe]="x" [index]="i"></app-recipe-item>
+    </ng-container>
+    <ng-template #please_login>
+      <h2>Please login!</h2>
+    </ng-template>
     <br><br><br>
-    <!-- <a *ngFor="let recipe of recipes" href="#" class="list-group-item clearfix">
-        <div class="pull-left">
-          <h4 class="list-group-item-heading">{{recipe.name}}</h4>
-          <p class="list-group-item-text">{{recipe.description}}</p>
-        </div>
-        <span class="pull-right">
-          <img src="{{recipe.imagePath}}" alt ="{{recipe.name}}" class="img-responsive" style="max-height: 50px;">
-        </span>
-    </a> -->
+  </div>
+  <div class="col-xs-12" *ngIf="technicalError">
+    <h4>A technical error occurred! Try again later :(</h4>
   </div>
 </div>

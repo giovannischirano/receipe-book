@@ -35,7 +35,6 @@ export class ShoppinglistService {
   }
 
   addIngredients(ings: Ingredient[]){
-    //console.log(ings);
     this.ingredients.push(...ings);
     this.ingredientsChanged.emit(true);
   }
