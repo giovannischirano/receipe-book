@@ -21,4 +21,8 @@ export class SigninComponent implements OnInit {
     this.authService.signinUser(email, password);
   }
 
+  signWithGoogle() {
+    this.authService.signWithGoogle();
+  }
+
 }

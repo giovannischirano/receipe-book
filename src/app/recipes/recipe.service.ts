@@ -52,6 +52,19 @@ export class RecipeService {
       // );
   }
 
+  getRecipesFromDB2() {
+    return this.dataStorageService.getRecipes()
+      .subscribe(
+        (recipes: Recipe[]) => {
+          console.log("Call to get recipes completed!.. Recipes #:" + recipes.length);
+          this.setRecipes(recipes);
+        },
+        (error) => {
+          console.log("Technical Error :(");
+        }
+      );
+  }
+
   getRecipe(id: number) {
     return this.recipes[id];
   }

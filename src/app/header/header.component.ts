@@ -17,39 +17,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private recipeService: RecipeService, private authService: AuthService) {}
 
   ngOnInit() {
-    //console.log("header init");
-    /*this.subscription = this.authService.isAuthenticated()
+    this.authService.isAuthenticated()
       .subscribe(
-        (bool: boolean) => { 
-          this.isAuthent = bool;
-          console.log("header"+bool);
+        (user) => {
+          if(user) {
+            this.isAuthent = true;
+          } else {
+            this.isAuthent = false;
+          }
         }
-      )*/
-      /*this.isAuthent = this.authService.isAuthenticated();
-      console.log(this.isAuthent);*/
-      /*console.log("onInit isAuth() richiamato");
-    this.isAuthent = this.authService.isAuthenticated();
-    console.log("onInit: " + this.isAuthent);
-    */}
-
-  /*isAuth() {
-    console.log("isAuth() richiamato");
-    this.isAuthent = this.authService.isAuthenticated();
-    return this.isAuthent;
-  }*/
-
-  /*onSelect(feature: string) {
-    this.featureSelected.emit(feature);
-  }*/
+      );
+  }
   
   saveData() {
     this.recipeService.storeRecipes();
   }
 
   onFetchData() {
-    console.log("click");
-    console.log("stop");
-    this.recipeService.getRecipes();
+    this.recipeService.getRecipesFromDB2();
   }
 
   onLogout() {

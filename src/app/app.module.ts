@@ -25,6 +25,12 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { SigninComponent } from './auth/signin/signin.component';
 import { AuthService } from './auth/auth.service';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+import { environment } from './../environments/environment';
+import * as firebase from 'firebase';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +52,10 @@ import { AuthService } from './auth/auth.service';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpModule
+    HttpModule,
+    AngularFireModule.initializeApp(environment.firebase, 'giovanni-ngrecipes'),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule
   ],
   providers: [ShoppinglistService, RecipeService, DataStorageService, AuthService, AuthGuard],
   bootstrap: [AppComponent]

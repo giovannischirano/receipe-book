@@ -4,46 +4,63 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { Subject } from 'rxjs/Subject';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Injectable()
 export class AuthService {
-  //token: string;
+  
+  private authState: Observable<firebase.User>;
+  private currentUser: firebase.User = null;
 
-  constructor(private router: Router) {}
-
-  signupUser(email: string, password: string) {
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .catch(
-        error => console.log(error)
-      )
+  constructor(private router: Router, private afAuth: AngularFireAuth) {
+    this.authState = this.afAuth.authState;
+    this.authState.subscribe(user => {
+      if (user) {
+        this.currentUser = user;
+      } else {
+        this.currentUser = null;
+      }
+    });
   }
 
-  signinUser(email: string, password: string) {
-    firebase.auth().signInWithEmailAndPassword(email, password)
+  signupUser(email: string, password: string) {
+    //firebase.auth().createUserWithEmailAndPassword(email, password)
+    this.afAuth.auth.createUserWithEmailAndPassword(email, password)
       .then(
         response => {
+          console.log("User registered!");
           this.router.navigate(['/']);
-          /*firebase.auth().currentUser.getIdToken()
-            .then(
-              (token: string) => { this.token = token; console.log(token); }
-            )*/
         }
       )
       .catch(
-        error => console.log(error)
+        error => { 
+          console.log("Something went wrong: " + error.message);
+        }
+      );
+  }
+
+  signinUser(email: string, password: string) {
+    //firebase.auth().signInWithEmailAndPassword(email, password)
+    this.afAuth.auth.signInAndRetrieveDataWithEmailAndPassword(email, password)
+      .then(
+        response => {
+          console.log("User logged!");
+          this.router.navigate(['/']);
+        }
+      )
+      .catch(
+        error => { 
+          console.log("Something went wrong: " + error.message);
+        }
       );
   }
 
   logout() {
-    firebase.auth().signOut();
+    this.afAuth.auth.signOut();
     this.router.navigate(['/signin']);
   }
 
   getIdToken() {
-    //return firebase.auth().currentUser.getIdToken();
-      /*.then(
-        (token: string) => { console.log(token); return token; }
-      )*/
       const tokenKey = Object.keys(window.localStorage)
         .filter(it => it.startsWith('firebase:authUser'))[0];
       const accessToken = JSON.parse(localStorage.getItem(tokenKey))['stsTokenManager']['accessToken'];
@@ -52,55 +69,36 @@ export class AuthService {
   }
 
   getUserUid() {
-    const uid = firebase.auth().currentUser.uid;
-    //console.log(uid);
-    //console.log(uid);
+    //const uid = firebase.auth().currentUser.uid;
+    const uid = this.afAuth.auth.currentUser.uid;
     /*const tokenKey = Object.keys(window.localStorage)
       .filter(it => it.startsWith('firebase:authUser'))[0];
-    const uid = JSON.parse(localStorage.getItem(tokenKey))['providerData'][0]['uid'];
-    console.log("storage: "+uid);*/
+    const uid = JSON.parse(localStorage.getItem(tokenKey))['providerData'][0]['uid'];*/
     
     return uid;
   }
 
   isAuthenticated() {
-    return firebase.auth().currentUser != null;
-    //return firebase.auth().currentUser != null;
-
-    /*if(user != null) {
-      //console.log("true");
-      return true;
-    } else return false;*/
+    return this.authState;
   }
-  /*isAuthenticated(){
-    return Observable.create(
-      (observer: Observer<boolean>) => {
-        const bool = firebase.auth().currentUser != null ? true : false;
-        console.log("sono in observable:"+bool);
-        observer.next(bool);
-      }
-    )
-  }*/
-    /*let bool = false;
-    firebase.auth().onAuthStateChanged(
-      user => {
-        if (user) { bool = true; }
-        else { bool = false; }
-        }
-      );*/
 
-  /*isAuthenticated(): Observable<boolean> {
-    const state = new Subject<boolean>();
-    firebase.auth().onAuthStateChanged(function (user) {
-        if (user) {
-            console.log (user.email);
-            state.next(true);
-        } else {
-          console.log ('No user.email');
-            state.next(false);
+  isAuthGuard() {
+    return this.currentUser != null;
+  }
+
+  signWithGoogle() {
+    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(
+        response => {
+          console.log("User logged!");
+          this.router.navigate(['/']);
         }
-    });
-    return state.asObservable();
-  }*/
+      )
+      .catch(
+        error => { 
+          console.log("Something went wrong: " + error.message);
+        }
+      );
+  }
   
 }

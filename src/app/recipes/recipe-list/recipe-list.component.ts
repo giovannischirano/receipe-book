@@ -20,9 +20,9 @@ export class RecipeListComponent implements OnInit, OnDestroy {
 
   recipes: Recipe[];
   subscription: Subscription;
-  isAuthenticated: boolean;
   afterLogin = true;
   technicalError = false;
+  loadingImage = true;
 
   constructor(private router: Router, private recipeService: RecipeService, private authService: AuthService) { }
 
@@ -39,7 +39,19 @@ export class RecipeListComponent implements OnInit, OnDestroy {
       authStatus => this.isAuthenticated = authStatus    
     );*/
     
-    this.isAuthenticated = this.authService.isAuthenticated();
+    this.recipeService.getRecipesFromDB()
+      .subscribe(
+        (recipes: Recipe[]) => {
+          console.log("Call to get recipes completed!.. Recipes #:" + recipes.length);
+          this.loadingImage = false;
+          this.recipeService.setRecipes(recipes);
+        },
+        (error) => {
+          console.log("Technical Error :(");
+          this.loadingImage = false;
+          this.technicalError = true;
+        }
+      );
     //console.log(this.authService.isAuthenticated());
     
     this.subscription = this.recipeService.recipesChanged
@@ -50,8 +62,8 @@ export class RecipeListComponent implements OnInit, OnDestroy {
       }
     );
 
-    if(this.isAuthenticated) {
-      console.log("Authenticated!");
+    /*if(this.isAuthenticated) {
+      //console.log("Authenticated!");
       this.recipeService.getRecipesFromDB()
         .subscribe(
           (recipes: Recipe[]) => {
@@ -64,9 +76,9 @@ export class RecipeListComponent implements OnInit, OnDestroy {
           }
         );
     } else {
-      console.log("Not authenticated!");
+      //console.log("Not authenticated!");
       this.router.navigate(['/signin']);
-    }
+    }*/
   }
 
   ngOnDestroy() {

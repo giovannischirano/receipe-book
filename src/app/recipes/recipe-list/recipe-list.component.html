@@ -5,14 +5,12 @@
 </div>
 <hr>
 <div class="row">
+  <img class="spinner" *ngIf="loadingImage" src="/assets/loading_image.gif"/>
   <div class="col-xs-12" *ngIf="!technicalError">
     <!-- lista di ricette item -->
-    <ng-container *ngIf="isAuthenticated; else please_login">
+    <ng-container>
       <app-recipe-item *ngFor="let x of recipes; let i = index" [recipe]="x" [index]="i"></app-recipe-item>
     </ng-container>
-    <ng-template #please_login>
-      <h2>Please login!</h2>
-    </ng-template>
     <br><br><br>
   </div>
   <div class="col-xs-12" *ngIf="technicalError">

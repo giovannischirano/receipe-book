@@ -16,6 +16,7 @@ export class RecipeDetailComponent implements OnInit {
   //@Input() recipe: Recipe;
   recipe: Recipe;
   id: number;
+  isAuthent: boolean = false;
 
   constructor(private route: ActivatedRoute, private recipesService: RecipeService, 
     private slService: ShoppinglistService,
@@ -29,6 +30,17 @@ export class RecipeDetailComponent implements OnInit {
         this.recipe = this.recipesService.getRecipe(this.id);
       }
     );
+
+    this.authService.isAuthenticated()
+      .subscribe(
+        (user) => {
+          if(user) {
+            this.isAuthent = true;
+          } else {
+            this.isAuthent = false;
+          }
+        }
+      );
   }
 
   onAddToShoppingList(){

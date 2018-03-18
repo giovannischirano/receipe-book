@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-root',
@@ -13,13 +12,6 @@ export class AppComponent implements OnInit {
     this.loadedFeature = feature;
   }*/
 
-  ngOnInit() {
-    // Initialize Firebase
-    firebase.initializeApp({
-      apiKey: "AIzaSyAEfN4C3vJoORMNXLEM-fzNeFaaBnBq8oo",
-      authDomain: "giovanni-ngrecipes.firebaseapp.com",
-      databaseURL: "https://giovanni-ngrecipes.firebaseio.com",
-      projectId: "giovanni-ngrecipes",
-    });
+  ngOnInit() {    
   }
 }
