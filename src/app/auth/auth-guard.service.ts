@@ -14,6 +14,11 @@ export class AuthGuard implements CanActivate {
     
     if(!isAuth) {
       console.log("User not logged; please Login!");
+      document.getElementById("alert_message").hidden = false;
+      setTimeout(() => {
+        document.getElementById("alert_message").hidden = true;
+      }, 3000);
+      
       this.router.navigate(['/signin']);
     }
     return isAuth;
