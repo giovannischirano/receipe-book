@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   subscription: Subscription;
   isAuthent : boolean;
+  userEmail: string;
 
   constructor(private recipeService: RecipeService, private authService: AuthService) {}
 
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(
         (user) => {
           if(user) {
+            this.userEmail = user.email;
             this.isAuthent = true;
           } else {
             this.isAuthent = false;
@@ -29,12 +31,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       );
   }
   
-  saveData() {
-    this.recipeService.storeRecipes();
-  }
+  /*saveData() {
+    this.recipeService.storeRecipe();
+  }*/
 
   onFetchData() {
-    this.recipeService.getRecipesFromDB2();
+    this.recipeService.getRecipesFromDB();
   }
 
   onLogout() {

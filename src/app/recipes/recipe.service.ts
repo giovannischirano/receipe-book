@@ -4,6 +4,7 @@ import { Recipe } from './recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
 import { Subject } from 'rxjs/Subject';
 import { DataStorageService } from '../shared/data-storage.service';
+import { RecipeDB } from './recipe-db.model';
 
 @Injectable()
 export class RecipeService {
@@ -41,46 +42,68 @@ export class RecipeService {
   }
 
   getRecipesFromDB() {
-    return this.dataStorageService.getRecipes();
-      // .subscribe(
-      //   (recipes: Recipe[]) => {
-      //     console.log("Call to get recipes completed!.. Recipes #:" + recipes.length);
-      //     this.recipes = recipes;
-      //     this.recipesChanged.next(this.recipes.slice());
-      //   },
-      //   (error) => {console.log("Errore tecnico");}
-      // );
-  }
-
-  getRecipesFromDB2() {
     return this.dataStorageService.getRecipes()
-      .subscribe(
-        (recipes: Recipe[]) => {
-          console.log("Call to get recipes completed!.. Recipes #:" + recipes.length);
-          this.setRecipes(recipes);
-        },
-        (error) => {
-          console.log("Technical Error :(");
-        }
-      );
   }
 
   getRecipe(id: number) {
     return this.recipes[id];
   }
 
-  deleteRecipe(id: number) {
-    this.recipes.splice(id, 1);
-    this.recipesChanged.next(this.recipes.slice());
+  deleteRecipe(idRecipe: number) {
+    if(confirm("Are you sure to delete this recipe?")) {
+      const keyRecipe = this.recipes[idRecipe].id;
+      this.dataStorageService.deleteRecipe(keyRecipe)
+      .subscribe(
+        (response: Response) => {
+          this.recipes.splice(idRecipe, 1);
+          console.log("Recipe deleted!");
+          this.recipesChanged.next(this.recipes.slice());
+        }
+      );
+    }
   }
 
-  storeRecipes() {
+  storeRecipe(recipeDB: RecipeDB) {
+    this.dataStorageService.storeRecipe(recipeDB)
+      .subscribe(
+        (response: Response) => {
+          const recipe: Recipe = new Recipe(recipeDB.name, recipeDB.description, recipeDB.imagePath, recipeDB.ingredients, recipeDB.uid, response.json()['name']);
+          this.recipes.push(recipe);
+          console.log("New Recipe saved!");
+          this.recipesChanged.next(this.recipes.slice());
+        }
+      );
+  }
+
+  editRecipe(idRecipe: number, recipeDB: RecipeDB) {
+    const keyRecipe = this.recipes[idRecipe].id;
+    this.dataStorageService.editRecipe(keyRecipe, recipeDB)
+      .subscribe(
+        (response: Response) => {
+          this.recipes[idRecipe].setRecipe(recipeDB);
+          console.log("Recipe edited!");
+          this.recipesChanged.next(this.recipes.slice());
+        }
+      );
+  }
+
+  /*storeRecipes() {
     this.dataStorageService.storeRecipes(this.recipes)
       .subscribe(
         (response: Response) => {
           console.log(response);
         }
       );
+  }*/
+
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  updateRecipe(index: number, newRecipe: Recipe) {
+    this.recipes[index] = newRecipe;
+    this.recipesChanged.next(this.recipes.slice());
   }
 
 }

@@ -22,8 +22,9 @@
             <a [routerLink]="['/signin']">Login</a>
           </li>
         </ng-template>
+        <li *ngIf="isAuthent"><a>Hi,<b> {{ userEmail }}</b></a></li>
         <li *ngIf="isAuthent"><a style="cursor: pointer;" (click)="onLogout()">Logout</a></li>
-        <li class="dropdown" *ngIf="isAuthent" appDropdown>
+        <!--<li class="dropdown" *ngIf="isAuthent" appDropdown>
           <a class="dropdown-toggle" role="button">Manage
             <span class="caret"></span>
           </a>
@@ -35,7 +36,7 @@
               <a style="cursor: pointer;" (click)="onFetchData()">Fetch Data</a>
             </li>
           </ul>
-        </li>
+        </li>-->
       </ul>
     </div>
   </div>
