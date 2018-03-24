@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private recipeService: RecipeService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.isAuthenticated()
+    this.subscription = this.authService.isAuthenticated()
       .subscribe(
         (user) => {
           if(user) {
@@ -44,6 +44,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //if(this.subscription) this.subscription.unsubscribe();
+    if(this.subscription) this.subscription.unsubscribe();
   }
 }

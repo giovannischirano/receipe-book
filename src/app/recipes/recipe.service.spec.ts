@@ -1,6 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { RecipeService } from './recipe.service';
+import { DataStorageService } from '../shared/data-storage.service';
 
 describe('RecipeService', () => {
   beforeEach(() => {
@@ -10,6 +11,6 @@ describe('RecipeService', () => {
   });
 
   it('should be created', inject([RecipeService], (service: RecipeService) => {
-    expect(service).toBeTruthy();
+    expect(service.hello()).toBe("Hello!");
   }));
 });

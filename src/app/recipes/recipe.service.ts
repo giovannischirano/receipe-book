@@ -11,7 +11,7 @@ export class RecipeService {
 
   //recipeSelected = new EventEmitter<Recipe>();
   recipesChanged = new Subject<Recipe[]>();
-
+  id = 1;
   private recipes: Recipe[] = [];/*[
     new Recipe(0, 'Pasta', 'Pasta buona', 'http://www.seriouseats.com/recipes/assets_c/2016/08/20160827-cherry-tomato-pasta-13-thumb-1500xauto-433876.jpg',
     [
@@ -31,6 +31,12 @@ export class RecipeService {
   ];*/
 
   constructor(private dataStorageService: DataStorageService) { }
+
+  //constructor() { }
+
+  hello() {
+    return "Hello!";
+  }
 
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes;
